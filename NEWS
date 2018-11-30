@@ -21,6 +21,12 @@ Major new features:
   18661-1:2014 and TS 18661-3:2015 as amended by the resolution of
   Clarification Request 13 to TS 18661-3.
 
+* Support RISC-V port for 32-bit. The ISA and ABI pairs supported as follows:
+
+    - rv32imac ilp32
+    - rv32imafdc ilp32
+    - rv32imafdc ilp32d
+
 Deprecated and removed features, and other changes affecting compatibility:
 
 * The totalorder and totalordermag functions, and the corresponding
