@@ -1450,6 +1450,38 @@
 	* sysdeps/riscv/rv32/rvd/s_lround.c: Likewise.
 	* sysdeps/riscv/rv32/rvf/s_lrintf.c: Likewise.
 	* sysdeps/riscv/rv32/rvf/s_lroundf.c: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/ldconfig.h (LD_SO_ABI): Support rv32.
+	* sysdeps/unix/sysv/linux/riscv/dl-cache.h (add_system_dir): Add
+	libraries path for rv32.
+	* sysdeps/riscv/bits/wordsize.h: Supprt rv32.
+	* sysdeps/riscv/nptl/bits/pthreadtypes-arch.h: Likewise.
+	* sysdeps/riscv/sfp-machine.h: Likewise.
+	* sysdeps/riscv/sys/asm.h: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/rv32/jmp_buf-macros.h: New file.
+	* sysdeps/unix/sysv/linux/riscv/rv32/lockf64.c: Likewise.
+	* sysdeps/riscv/rv32/rvd/s_lrint.c: New file.
+	* sysdeps/riscv/rv32/rvd/s_lround.c: Likewise.
+	* sysdeps/riscv/rv32/rvf/s_lrintf.c: Likewise.
+	* sysdeps/riscv/rv32/rvf/s_lroundf.c: Likewise.
+	* sysdeps/riscv/nofpu/libm-test-ulps: Regenerate.
+	* sysdeps/riscv/rvd/libm-test-ulps: New file.
+	* sysdeps/riscv/rvd/libm-test-ulps-name: New file.
+	* sysdeps/riscv/rv64/rvd/libm-test-ulps: Remove file.
+	* sysdeps/riscv/rv64/rvd/libm-test-ulps-name: Remove file.
+	* sysdeps/unix/sysv/linux/riscv/rv32/c++-types.data: New file.
+	* sysdeps/unix/sysv/linux/riscv/rv32/ld.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/rv32/libanl.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/rv32/libc.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/rv32/libcrypt.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/rv32/libdl.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/rv32/libm.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/rv32/libpthread.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/rv32/libresolv.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/rv32/librt.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/rv32/libthread_db.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/rv32/libutil.abilist: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/rv32/libBrokenLocale.abilist:
+	Likewise.
 
 2019-06-20  Dmitry V. Levin  <ldv@altlinux.org>
 	    Florian Weimer  <fweimer@redhat.com>
