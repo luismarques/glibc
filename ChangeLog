@@ -1433,6 +1433,10 @@
 	* sysdeps/unix/sysv/linux/riscv/bits/timesize.h: Likewise.
 	* sysdeps/unix/sysv/linux/riscv/bits/typesizes.h: Likewise.
 
+2018-06-20  Zong Li  <zong@andestech.com>
+
+	* sysdeps/unix/sysv/linux/riscv/ldconfig.h (LD_SO_ABI): Support rv32.
+
 2019-06-20  Dmitry V. Levin  <ldv@altlinux.org>
 	    Florian Weimer  <fweimer@redhat.com>
 
