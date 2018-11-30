@@ -1491,6 +1491,16 @@
 	* sysdeps/unix/sysv/linux/riscv/configure.ac: Likewise.
 	* sysdeps/unix/sysv/linux/riscv/shlib-versions: Likewise.
 	* sysdeps/riscv/preconfigure: Likewise.
+	* sysdeps/riscv/rv32/Implies-after: New file.
+	* sysdeps/riscv/rv32/rvd/Implies: Likewise.
+	* sysdeps/riscv/rv32/rvf/Implies: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/rv32/Implies: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/Makefile: Support rv32.
+	* sysdeps/unix/sysv/linux/riscv/configure: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/configure.ac: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/shlib-versions: Likewise.
+	* sysdeps/riscv/preconfigure: Likewise.
+	* sysdeps/riscv/rv32/fix-fp-int-convert-overflow.h: New file.
 
 2019-06-20  Dmitry V. Levin  <ldv@altlinux.org>
 	    Florian Weimer  <fweimer@redhat.com>
