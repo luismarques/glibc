@@ -1446,6 +1446,10 @@
 	* sysdeps/riscv/sfp-machine.h: Likewise.
 	* sysdeps/riscv/sys/asm.h: Likewise.
 	* sysdeps/unix/sysv/linux/riscv/rv32/jmp_buf-macros.h: New file.
+	* sysdeps/riscv/rv32/rvd/s_lrint.c: New file.
+	* sysdeps/riscv/rv32/rvd/s_lround.c: Likewise.
+	* sysdeps/riscv/rv32/rvf/s_lrintf.c: Likewise.
+	* sysdeps/riscv/rv32/rvf/s_lroundf.c: Likewise.
 
 2019-06-20  Dmitry V. Levin  <ldv@altlinux.org>
 	    Florian Weimer  <fweimer@redhat.com>
