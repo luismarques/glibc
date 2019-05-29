@@ -139,3 +139,51 @@
    */
 
 #define __ASSUME_CLONE_DEFAULT 1
+
+/* Support for the 64-bit time Linux kernel syscalls.
+
+   This flag indicates support for Linux kernel syscalls using the 64-bit time
+   ABI. It is defined for all 64-bit architectures as they have always
+   supported 64-bit time. It is also defined for all 32-bit architectures when
+   using Linux kernel version 5.1 or newer.
+
+   When the __ASSUME_TIME64_SYSCALLS macro is defined glibc can call, without needing to
+   check at runtime for ENOSYS errors, the *64/time64 suffixed syscalls. These
+   should be #defined to the the unsuffixed versions when required (such as
+   when running on 64-bit systems).
+
+   __ASSUME_TIME64_SYSCALLS macro being defined does not mean that __TIMESIZE is
+   64-bit. In cases where the __TIMESIZE is 64-bit the 64-bit syscalls can be
+   used directly. In cases where __TIMESIZE is 32-bit conversions between the
+   original 32-bit values and the kernel's 64-bit values will need to occur.
+
+   As an example - the syscall to set clock (clock_settime) - if the
+   __ASSUME_TIME64_SYSCALLS macro is defined, it indicates that 64-bit time can
+   be set in the system.
+
+   On systems with __WORDSIZE == 64 the __NR_clock_settime syscall is used
+   to achieve this goal. Systems with __WORDSIZE == 32 use the
+   __NR_clock_settime64 syscall available from Linux version 5.1.
+
+   The __ASSUME_TIME64_SYSCALLS macro is defined for:
+
+   1. 64-bit systems that have always had 64-bit time support (__WORDSIZE == 64).
+
+   2. For x32 architecture, which is a special case in respect to 64-bit
+      time support (it has __WORDSIZE==32 but __TIMESIZE==64)
+
+   3. Systems with __WORDSIZE==32, which gain 64-bit time support
+      with the syscalls added to Linux kernel 5.1.
+
+   4. 32-bit architectures for which support was added in Linux 5.1 or later,
+      or for which the kernel/userspace ABI changed incompatibly in Linux 5.1
+      or later so that there are no syscalls using 32-bit time.
+   */
+
+#include <bits/wordsize.h>
+#if (__WORDSIZE == 64                                                   \
+     || (__WORDSIZE == 32                                               \
+         && (__LINUX_KERNEL_VERSION >= 0x050100                         \
+             || (defined __SYSCALL_WORDSIZE && __SYSCALL_WORDSIZE == 64))))
+# define __ASSUME_TIME64_SYSCALLS 1
+#endif
