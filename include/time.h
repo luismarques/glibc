@@ -172,6 +172,12 @@ libc_hidden_proto (__difftime64)
 
 extern double __difftime (time_t time1, time_t time0);
 
+#if __TIMESIZE == 64
+#define __thrd_sleep_time64 thrd_sleep
+#define __clock_nanosleep_time64 __clock_nanosleep
+#define __nanosleep_time64 __nanosleep
+#define __nanosleep_nocancel_time64 __nanosleep_nocancel
+#endif
 
 /* Use in the clock_* functions.  Size of the field representing the
    actual clock ID.  */
