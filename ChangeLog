@@ -1428,6 +1428,10 @@
 	* sysdeps/unix/sysv/linux/wait.c: Use __NR_waitid if avaliable.
 	* sysdeps/unix/sysv/linux/waitpid.c: Likewise.
 	* sysdeps/unix/sysv/linux/waitpid_nocancel.c: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/bits/environments.h: Use 64-bit time_t and off_t for RV32 and RV64.
+	* sysdeps/unix/sysv/linux/riscv/bits/time64.h: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/bits/timesize.h: Likewise.
+	* sysdeps/unix/sysv/linux/riscv/bits/typesizes.h: Likewise.
 
 2019-06-20  Dmitry V. Levin  <ldv@altlinux.org>
 	    Florian Weimer  <fweimer@redhat.com>
