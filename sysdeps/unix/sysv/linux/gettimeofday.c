@@ -32,7 +32,58 @@
 int
 __gettimeofday (struct timeval *tv, struct timezone *tz)
 {
+#ifdef __ASSUME_TIME64_SYSCALLS
+  long int ret;
+  struct timespec now;
+
+  ret = INLINE_VSYSCALL (clock_gettime64, 2, CLOCK_REALTIME,
+                         &now);
+
+  if (ret == 0 || errno != ENOSYS)
+    {
+      /* Convert from timespec to timeval */
+      tv->tv_sec = now.tv_sec;
+      tv->tv_usec = now.tv_nsec / 1000;
+    }
+  return ret;
+#else
+# ifdef __NR_clock_nanosleep_time64
+  long int ret;
+#  if __TIMESIZE == 64
+  ret = INLINE_VSYSCALL (clock_gettime64, 2, CLOCK_REALTIME,
+                         &now);
+
+  if (ret == 0 || errno != ENOSYS)
+    {
+      /* Convert from timespec to timeval */
+      tv->tv_sec = now.tv_sec;
+      tv->tv_usec = now.tv_nsec / 1000;
+      return ret;
+    }
+#  else
+  struct __timespec64 now;
+
+  ret = INLINE_VSYSCALL (clock_gettime64, 2, CLOCK_REALTIME,
+                         &now);
+
+  if (ret == 0 || errno != ENOSYS)
+    {
+      /* Convert from timespec to timeval */
+      tv->tv_sec = now.tv_sec;
+      tv->tv_usec = now.tv_nsec / 1000;
+      return ret;
+    }
+#  endif /* __TIMESIZE == 64 */
+# endif /* __NR_clock_nanosleep_time64 */
+# if __TIMESIZE == 64
+  if (! in_time_t_range (tv->tv_sec))
+    {
+      __set_errno (EOVERFLOW);
+      return -1;
+    }
+# endif /* __TIMESIZE == 64 */
   return INLINE_VSYSCALL (gettimeofday, 2, tv, tz);
+#endif
 }
 libc_hidden_def (__gettimeofday)
 weak_alias (__gettimeofday, gettimeofday)

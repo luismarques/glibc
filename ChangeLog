@@ -1424,6 +1424,7 @@
 	* nptl/thrd_sleep.c: Use clock_nanosleep_time64 instead of nanosleep.
 	* sysdeps/unix/sysv/linux/nanosleep.c: Likewise.
 	* sysdeps/unix/sysv/linux/nanosleep_nocancel.c: Likewise.
+	* sysdeps/unix/sysv/linux/gettimeofday.c: Use clock_gettime64 syscall for gettimeofday.
 
 2019-06-20  Dmitry V. Levin  <ldv@altlinux.org>
 	    Florian Weimer  <fweimer@redhat.com>
