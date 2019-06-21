@@ -1425,6 +1425,9 @@
 	* sysdeps/unix/sysv/linux/nanosleep.c: Likewise.
 	* sysdeps/unix/sysv/linux/nanosleep_nocancel.c: Likewise.
 	* sysdeps/unix/sysv/linux/gettimeofday.c: Use clock_gettime64 syscall for gettimeofday.
+	* sysdeps/unix/sysv/linux/wait.c: Use __NR_waitid if avaliable.
+	* sysdeps/unix/sysv/linux/waitpid.c: Likewise.
+	* sysdeps/unix/sysv/linux/waitpid_nocancel.c: Likewise.
 
 2019-06-20  Dmitry V. Levin  <ldv@altlinux.org>
 	    Florian Weimer  <fweimer@redhat.com>

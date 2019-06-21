@@ -26,9 +26,44 @@
 pid_t
 __libc_wait (int *stat_loc)
 {
-  pid_t result = SYSCALL_CANCEL (wait4, WAIT_ANY, stat_loc, 0,
-				 (struct rusage *) NULL);
-  return result;
+#ifdef __NR_wait4
+  return SYSCALL_CANCEL (wait4, WAIT_ANY, stat_loc, 0,
+                         (struct rusage *) NULL);
+#else
+  siginfo_t infop;
+  __pid_t ret;
+
+  ret = SYSCALL_CANCEL (waitid, P_ALL, 0, &infop, WEXITED, NULL);
+
+  if (ret < 0)
+      return ret;
+
+  if (stat_loc)
+    {
+      *stat_loc = 0;
+      switch (infop.si_code)
+      {
+        case CLD_EXITED:
+            *stat_loc = infop.si_status << 8;
+            break;
+        case CLD_DUMPED:
+            *stat_loc = 0x80;
+            /* Fallthrough */
+        case CLD_KILLED:
+            *stat_loc |= infop.si_status;
+            break;
+        case CLD_TRAPPED:
+        case CLD_STOPPED:
+            *stat_loc = infop.si_status << 8 | 0x7f;
+            break;
+        case CLD_CONTINUED:
+            *stat_loc = 0xffff;
+            break;
+      }
+    }
+
+  return infop.si_pid;
+#endif
 }
 
 weak_alias (__libc_wait, __wait)
