@@ -24,6 +24,53 @@ int
 __nanosleep_nocancel (const struct timespec *requested_time,
 		      struct timespec *remaining)
 {
+#ifdef __ASSUME_TIME64_SYSCALLS
+  return INLINE_SYSCALL_CALL (clock_nanosleep_time64, CLOCK_REALTIME, 0,
+                         requested_time, remaining);
+#else
+  long int ret;
+# ifdef __NR_clock_nanosleep_time64
+#  if __TIMESIZE == 64
+  ret = INLINE_SYSCALL_CALL (clock_nanosleep_time64, CLOCK_REALTIME, 0,
+                             requested_time, remaining);
+
+  if (ret_64 == 0 || errno != ENOSYS)
+    return ret;
+#  else
+  timespec64 ts64;
+
+  ret = INLINE_SYSCALL_CALL (clock_nanosleep_time64, CLOCK_REALTIME, 0,
+                             time_point, ts64);
+
+  if (ret == 0 || errno != ENOSYS)
+    {
+      remaining->tv_sec = ts64.tv_sec;
+      remaining->tv_nsec = ts64.tv_nsec;
+      return ret;
+    }
+#  endif /* __TIMESIZE == 64 */
+# endif /* __NR_clock_nanosleep_time64 */
+# if __TIMESIZE == 64
+  struct timespec ts32, tr32;
+
+  if (! in_time_t_range (requested_time->tv_sec))
+    {
+      __set_errno (EOVERFLOW);
+      return -1;
+    }
+
+  valid_timespec64_to_timespec (requested_time, &ts32);
+  ret = INLINE_SYSCALL_CALL (nanosleep, &ts32, &tr32);
+
+  if (ret == 0 || errno != ENOSYS)
+    {
+      remaining->tv_sec = tr32.tv_sec;
+      remaining->tv_nsec = tr32.tv_nsec;
+    }
+  return ret;
+# else
   return INLINE_SYSCALL_CALL (nanosleep, requested_time, remaining);
+# endif /* __TIMESIZE == 64 */
+#endif /* __ASSUME_TIME64_SYSCALLS */
 }
 hidden_def (__nanosleep_nocancel)
