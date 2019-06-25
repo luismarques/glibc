@@ -116,6 +116,15 @@
 
 #include <sysdeps/unix/sysdep.h>
 
+#if __riscv_xlen == 32
+/* Define the __NR_futex as __NR_futex64 as RV32 doesn't have a
+ * __NR_futex syscall.
+ */
+# ifndef __NR_futex
+#  define __NR_futex __NR_futex_time64
+# endif
+#endif
+
 #undef SYS_ify
 #define SYS_ify(syscall_name)	__NR_##syscall_name
 
