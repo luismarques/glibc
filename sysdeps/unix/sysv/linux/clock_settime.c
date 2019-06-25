@@ -54,7 +54,6 @@ __clock_settime64 (clockid_t clock_id, const struct __timespec64 *tp)
 }
 weak_alias (__clock_settime, clock_settime)
 
-#if __TIMESIZE != 64
 int
 __clock_settime (clockid_t clock_id, const struct timespec *tp)
 {
@@ -63,4 +62,3 @@ __clock_settime (clockid_t clock_id, const struct timespec *tp)
   valid_timespec_to_timespec64 (tp, &ts64);
   return __clock_settime64 (clock_id, &ts64);
 }
-#endif
