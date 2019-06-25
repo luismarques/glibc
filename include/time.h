@@ -127,13 +127,9 @@ extern __time64_t __timegm64 (struct tm *__tp) __THROW;
 libc_hidden_proto (__timegm64)
 #endif
 
-#if __TIMESIZE == 64
-# define __clock_settime64 __clock_settime
-#else
 extern int __clock_settime64 (clockid_t clock_id,
                               const struct __timespec64 *tp);
 libc_hidden_proto (__clock_settime64)
-#endif
 
 /* Compute the `struct tm' representation of T,
    offset OFFSET seconds east of UTC,
@@ -189,7 +185,6 @@ in_time_t_range (__time64_t t)
   return s == t;
 }
 
-# ifndef __ASSUME_TIME64_SYSCALLS
 /* Convert a known valid struct timeval into a struct __timespec64.  */
 static inline void
 valid_timeval_to_timespec64 (const struct timeval *tv32,
@@ -273,6 +268,5 @@ timespec64_to_timeval (const struct __timespec64 *ts64,
   valid_timespec64_to_timeval (ts64, tv32);
   return true;
 }
-# endif
 #endif
 #endif
