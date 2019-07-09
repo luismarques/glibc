@@ -22,12 +22,18 @@
 
 long int (*VDSO_SYMBOL (getcpu)) (unsigned int *, unsigned int *, void *)
     attribute_hidden;
-long int (*VDSO_SYMBOL (gettimeofday)) (struct timeval *, void *)
-    attribute_hidden;
-long int (*VDSO_SYMBOL (__clock_gettime64)) (clockid_t, struct __timespec64 *)
+
+#if __riscv_xlen == 64
+long int (*VDSO_SYMBOL (clock_gettime)) (clockid_t, struct timespec *)
     attribute_hidden;
 long int (*VDSO_SYMBOL (clock_getres)) (clockid_t, struct timespec *)
     attribute_hidden;
+long int (*VDSO_SYMBOL (gettimeofday)) (struct timeval *, void *)
+    attribute_hidden;
+#else
+long int (*VDSO_SYMBOL (clock_gettime64)) (clockid_t, struct timespec *)
+    attribute_hidden;
+#endif
 
 static inline void
 _libc_vdso_platform_setup (void)
@@ -38,17 +44,25 @@ _libc_vdso_platform_setup (void)
   PTR_MANGLE (p);
   VDSO_SYMBOL (getcpu) = p;
 
+#if __riscv_xlen == 32
+  p = _dl_vdso_vsym ("__vdso_clock_gettime64", &linux_version);
+  PTR_MANGLE (p);
+  VDSO_SYMBOL (clock_gettime64) = p;
+#else
+  p = _dl_vdso_vsym ("__vdso_clock_gettime", &linux_version);
+  PTR_MANGLE (p);
+  VDSO_SYMBOL (clock_gettime) = p;
+#endif
+
+#if __riscv_xlen == 64
   p = _dl_vdso_vsym ("__vdso_gettimeofday", &linux_version);
   PTR_MANGLE (p);
   VDSO_SYMBOL (gettimeofday) = p;
 
-  p = _dl_vdso_vsym ("__vdso_clock_gettime", &linux_version);
-  PTR_MANGLE (p);
-  VDSO_SYMBOL (clock_gettime) = p;
-
   p = _dl_vdso_vsym ("__vdso_clock_getres", &linux_version);
   PTR_MANGLE (p);
   VDSO_SYMBOL (clock_getres) = p;
+#endif
 }
 
 #define VDSO_SETUP _libc_vdso_platform_setup
