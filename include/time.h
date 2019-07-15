@@ -177,6 +177,7 @@ extern double __difftime (time_t time1, time_t time0);
 #define __clock_nanosleep_time64 __clock_nanosleep
 #define __nanosleep_time64 __nanosleep
 #define __nanosleep_nocancel_time64 __nanosleep_nocancel
+#define __clock_gettime64 __clock_gettime
 #endif
 
 /* Use in the clock_* functions.  Size of the field representing the
