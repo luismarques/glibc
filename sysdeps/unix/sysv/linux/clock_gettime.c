@@ -27,10 +27,70 @@
 #include <sysdep-vdso.h>
 
 /* Get current value of CLOCK and store it in TP.  */
+
 int
 __clock_gettime (clockid_t clock_id, struct timespec *tp)
 {
-  return INLINE_VSYSCALL (clock_gettime, 2, clock_id, tp);
+
+#ifdef __ASSUME_TIME64_SYSCALLS
+   return INLINE_VSYSCALL (clock_gettime64, 2, clock_id, tp);
+#else
+   int ret;
+# ifdef __NR_clock_gettime64
+#  if __TIMESIZE == 64
+  ret = INLINE_VSYSCALL (clock_gettime64, 2, clock_id, tp);
+
+  if (ret == 0 || errno != ENOSYS)
+    {
+      return ret;
+    }
+#  else
+  struct __timespec64 tp64;
+  ret = INLINE_VSYSCALL (clock_gettime64, 2, clock_id, &tp64);
+
+  if (ret == 0 || errno != ENOSYS)
+    {
+      tp->tv_sec = tp64.tv_sec;
+      tp->tv_nsec = tp64.tv_nsec;
+      if (! in_time_t_range (tp->tv_sec))
+        {
+          __set_errno (EOVERFLOW);
+          return -1;
+        }
+
+      return 0;
+    }
+#  endif /* __TIMESIZE == 64 */
+# endif /* __NR_clock_gettime64 */
+# if __TIMESIZE == 64
+  struct timespec ts32;
+
+  if (! in_time_t_range (tp->tv_sec))
+    {
+      __set_errno (EOVERFLOW);
+      return -1;
+    }
+
+  ret = INLINE_VSYSCALL (clock_gettime, 2, clock_id, &ts32);
+
+  if (ret == 0 || errno != ENOSYS)
+    {
+      tp->tv_sec = ts32.tv_sec;
+      tp->tv_nsec = ts32.tv_nsec;
+      if (! in_time_t_range (tp->tv_sec))
+        {
+          __set_errno (EOVERFLOW);
+          return -1;
+        }
+
+      return 0;
+    }
+  return ret;
+# else
+    return INLINE_VSYSCALL (clock_gettime, 2, clock_id, tp);
+# endif /* __TIMESIZE == 64 */
+#endif /* __ASSUME_TIME64_SYSCALLS */
 }
+
 weak_alias (__clock_gettime, clock_gettime)
 libc_hidden_def (__clock_gettime)
