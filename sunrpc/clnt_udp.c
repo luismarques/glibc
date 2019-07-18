@@ -290,7 +290,7 @@ clntudp_call (/* client handle */
   int anyup;			/* any network interface up */
 
   struct deadline_current_time current_time = __deadline_current_time ();
-  struct deadline total_deadline; /* Determined once by overall timeout.  */
+  struct deadline total_deadline = { 0 }; /* Determined once by overall timeout.  */
   struct deadline response_deadline; /* Determined anew for each query.  */
 
   /* Choose the timeout value.  For non-sending usage (xargs == NULL),
