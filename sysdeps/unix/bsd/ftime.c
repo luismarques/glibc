@@ -34,7 +34,7 @@ ftime (struct timeb *timebuf)
       ++timebuf->time;
       timebuf->millitm = 0;
     }
-  timebuf->timezone = tz.tz_minuteswest;
-  timebuf->dstflag = tz.tz_dsttime;
+  timebuf->timezone = tz.tz_minuteswest_dep;
+  timebuf->dstflag = tz.tz_dsttime_dep;
   return 0;
 }
