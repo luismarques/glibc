@@ -24,6 +24,13 @@
 /* Get the platform-dependent flags.  */
 #include <bits/timerfd.h>
 
+#if __TIMESIZE == 32
+struct __itimerspec64
+  {
+    struct __timespec64 it_interval;
+    struct __timespec64 it_value;
+  };
+#endif
 
 /* Bits to be set in the FLAGS parameter of `timerfd_settime'.  */
 enum
@@ -40,16 +47,16 @@ __BEGIN_DECLS
 /* Return file descriptor for new interval timer source.  */
 extern int timerfd_create (__clockid_t __clock_id, int __flags) __THROW;
 
-/* Set next expiration time of interval timer source UFD to UTMR.  If
-   FLAGS has the TFD_TIMER_ABSTIME flag set the timeout value is
-   absolute.  Optionally return the old expiration time in OTMR.  */
-extern int timerfd_settime (int __ufd, int __flags,
-			    const struct itimerspec *__utmr,
-			    struct itimerspec *__otmr) __THROW;
-
 /* Return the next expiration time of UFD.  */
 extern int timerfd_gettime (int __ufd, struct itimerspec *__otmr) __THROW;
 
 __END_DECLS
+
+/* Set next expiration time of interval timer source UFD to UTMR.  If
+   FLAGS has the TFD_TIMER_ABSTIME flag set the timeout value is
+   absolute.  Optionally return the old expiration time in OTMR.  */
+int timerfd_settime (int __ufd, int __flags,
+        const struct itimerspec *__utmr,
+        struct itimerspec *__otmr) __THROW;
 
 #endif /* sys/timerfd.h */
