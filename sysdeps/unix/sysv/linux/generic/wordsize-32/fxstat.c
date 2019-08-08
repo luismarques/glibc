@@ -43,7 +43,7 @@ __fxstat (int vers, int fd, struct stat *buf)
       int rc = INLINE_SYSCALL (statx, 5, fd, "", AT_EMPTY_PATH,
                                STATX_BASIC_STATS, &tmp);
       if (rc == 0)
-        __cp_stat64_statx ((struct stat64 *)buf, &tmp);
+        __cp_stat_statx (buf, &tmp);
 # endif
       return rc ?: stat_overflow (buf);
     }

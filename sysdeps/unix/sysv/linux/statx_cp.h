@@ -18,3 +18,6 @@
 
 extern void __cp_stat64_statx (struct stat64 *to, struct statx *from)
   attribute_hidden;
+
+extern void __cp_stat_statx (struct stat *to, struct statx *from)
+  attribute_hidden;

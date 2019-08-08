@@ -42,7 +42,7 @@ __xstat (int vers, const char *name, struct stat *buf)
       int rc = INLINE_SYSCALL (statx, 5, AT_FDCWD, name, AT_NO_AUTOMOUNT,
                                STATX_BASIC_STATS, &tmp);
       if (rc == 0)
-        __cp_stat64_statx ((struct stat64 *)buf, &tmp);
+        __cp_stat_statx (buf, &tmp);
 # endif
       return rc ?: stat_overflow (buf);
     }

@@ -44,7 +44,7 @@ __fxstatat (int vers, int fd, const char *file, struct stat *buf, int flag)
                                AT_NO_AUTOMOUNT | flag,
                                STATX_BASIC_STATS, &tmp);
       if (rc == 0)
-        __cp_stat64_statx ((struct stat64 *)buf, &tmp);
+        __cp_stat_statx (buf, &tmp);
 # endif
       return rc ?: stat_overflow (buf);
     }

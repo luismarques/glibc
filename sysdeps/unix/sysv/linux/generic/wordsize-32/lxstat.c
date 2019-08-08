@@ -44,7 +44,7 @@ __lxstat (int vers, const char *name, struct stat *buf)
                                AT_NO_AUTOMOUNT | AT_SYMLINK_NOFOLLOW,
                                STATX_BASIC_STATS, &tmp);
       if (rc == 0)
-        __cp_stat64_statx ((struct stat64 *)buf, &tmp);
+        __cp_stat_statx (buf, &tmp);
 #endif
       return rc ?: stat_overflow (buf);
     }
