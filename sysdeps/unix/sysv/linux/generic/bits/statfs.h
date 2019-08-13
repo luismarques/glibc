@@ -32,7 +32,10 @@
    using __USE_FILE_OFFSET64 only see the low 32 bits of some
    of the fields (the __fsblkcnt_t and __fsfilcnt_t fields).  */
 
-#if defined __USE_FILE_OFFSET64
+#if defined(__USE_FILE_OFFSET64) || __INO_T_MATCHES_INO64_T == 1
+# if __INO_T_MATCHES_INO64_T == 1 && __OFF_T_MATCHES_OFF64_T != 1
+#  error "ino_t and off_t must both be the same type"
+# endif
 # define __field64(type, type64, name) type64 name
 #elif __WORDSIZE == 64
 # define __field64(type, type64, name) type name
