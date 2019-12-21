@@ -155,6 +155,7 @@ _ACEOF
 if (eval "$ac_cpp conftest.$ac_ext") 2>&5 |
   $EGREP "4 4 4" >/dev/null 2>&1; then :
   libc_cv_riscv_int_abi=ilp32
+  arch_minimum_kernel=5.4.0
 fi
 rm -f conftest*
 
