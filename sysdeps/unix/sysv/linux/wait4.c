@@ -18,14 +18,30 @@
 
 #include <sys/wait.h>
 #include <sys/resource.h>
+#include <sys/types.h>
 #include <sysdep-cancel.h>
+#include <tv32-compat.h>
 
 pid_t
-__wait4 (pid_t pid, int *stat_loc, int options, struct rusage *usage)
+__wait4_time64 (pid_t pid, int *stat_loc, int options, struct __rusage64 *usage)
 {
 #ifdef __NR_wait4
+# if __KERNEL_OLD_TIMEVAL_MATCHES_TIMEVAL64
   return SYSCALL_CANCEL (wait4, pid, stat_loc, options, usage);
+# else
+  struct __rusage32 usage32;
+  pid_t ret = SYSCALL_CANCEL (wait4, pid, stat_loc, options, &usage32);
+
+  if (ret != 0)
+    return ret;
+
+  if (usage != NULL)
+      rusage32_to_rusage64 (&usage32, usage);
+
+  return ret;
+# endif
 #elif defined (__ASSUME_WAITID_PID0_P_PGID)
+  struct __rusage32 usage32;
   idtype_t idtype = P_PID;
 
   if (pid < -1)
@@ -41,7 +57,12 @@ __wait4 (pid_t pid, int *stat_loc, int options, struct rusage *usage)
   options |= WEXITED;
 
   siginfo_t infop;
+
+# if __KERNEL_OLD_TIMEVAL_MATCHES_TIMEVAL64
   if (SYSCALL_CANCEL (waitid, idtype, pid, &infop, options, usage) < 0)
+# else
+  if (SYSCALL_CANCEL (waitid, idtype, pid, &infop, options, &usage32) < 0)
+# endif
     return -1;
 
   if (stat_loc)
@@ -70,8 +91,13 @@ __wait4 (pid_t pid, int *stat_loc, int options, struct rusage *usage)
         }
     }
 
+# if __KERNEL_OLD_TIMEVAL_MATCHES_TIMEVAL64 == 0
+  if (usage != NULL)
+      rusage32_to_rusage64 (&usage32, usage);
+# endif
+
   return infop.si_pid;
-# else
+#else
 /* Linux waitid prior kernel 5.4 does not support waiting for the current
    process.  It is possible to emulate wait4 it by calling getpgid for
    PID 0, however, it would require an additional syscall and it is inherent
@@ -81,5 +107,25 @@ __wait4 (pid_t pid, int *stat_loc, int options, struct rusage *usage)
 # error "The kernel ABI does not provide a way to implement wait4"
 #endif
 }
+
+#if __TIMESIZE != 64
+libc_hidden_def (__wait4_time64)
+
+pid_t
+__wait4 (pid_t pid, int *stat_loc, int options, struct rusage *usage)
+{
+  pid_t ret ;
+  struct __rusage64 usage64;
+
+  ret = __wait4_time64 (pid, stat_loc, options, &usage64);
+
+  if (ret != 0)
+    return ret;
+
+  rusage64_to_rusage (&usage64, usage);
+
+  return ret;
+}
+#endif
 libc_hidden_def (__wait4);
 weak_alias (__wait4, wait4)
