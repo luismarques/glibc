@@ -10,4 +10,12 @@ struct timeval
   __time_t tv_sec;		/* Seconds.  */
   __suseconds_t tv_usec;	/* Microseconds.  */
 };
+
+/* A version of 'struct timeval' with `long` time_t
+   and suseconds_t.  */
+struct __timeval_long
+{
+  long tv_sec;		/* Seconds.  */
+  long tv_usec;		/* Microseconds.  */
+};
 #endif
