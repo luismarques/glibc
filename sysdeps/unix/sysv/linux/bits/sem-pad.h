@@ -30,4 +30,15 @@
    layout conversions for this structure.  */
 
 #define __SEM_PAD_AFTER_TIME (__TIMESIZE == 32)
-#define __SEM_PAD_BEFORE_TIME 0
+
+/* If we are using a 32-bit architecture with a 64-bit time_t let's
+   define __SEM_PAD_BEFORE_TIME as 1. This is because the kernel is
+   expecting a type __kernel_old_time_t which is 32-bit even with a
+   64-bit time_t. Instead of adding another check, let's just set
+   __SEM_PAD_BEFORE_TIME as that will use a long type instead of
+   long long.  */
+#if __WORDSIZE == 32 && __TIMESIZE == 64
+# define __SEM_PAD_BEFORE_TIME 1
+#else
+# define __SEM_PAD_BEFORE_TIME 0
+#endif
