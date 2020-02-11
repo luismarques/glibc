@@ -94,6 +94,9 @@
 # define __STATFS_MATCHES_STATFS64  0
 #endif
 
+/* And for getitimer, setitimer and rusage  */
+#define __KERNEL_OLD_TIMEVAL_MATCHES_TIMEVAL64 1
+
 /* Number of descriptors that can fit in an `fd_set'.  */
 #define __FD_SETSIZE		1024
 
