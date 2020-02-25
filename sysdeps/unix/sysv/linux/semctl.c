@@ -29,6 +29,9 @@ union semun
 {
   int val;			/* value for SETVAL */
   struct semid_ds *buf;		/* buffer for IPC_STAT & IPC_SET */
+#if __WORDSIZE == 32
+  struct __semid_ds32 *buf32;   /* 32-bit buffer for IPC_STAT */
+#endif
   unsigned short int *array;	/* array for GETALL & SETALL */
   struct seminfo *__buf;	/* buffer for IPC_INFO */
 };
@@ -44,13 +47,26 @@ union semun
 static int
 semctl_syscall (int semid, int semnum, int cmd, union semun arg)
 {
+  int ret;
 #ifdef __ASSUME_DIRECT_SYSVIPC_SYSCALLS
-  return INLINE_SYSCALL_CALL (semctl, semid, semnum, cmd | __IPC_64,
-			      arg.array);
+  ret = INLINE_SYSCALL_CALL (semctl, semid, semnum, cmd | __IPC_64,
+                             arg.array);
 #else
-  return INLINE_SYSCALL_CALL (ipc, IPCOP_semctl, semid, semnum, cmd | __IPC_64,
-			      SEMCTL_ARG_ADDRESS (arg));
+  ret = INLINE_SYSCALL_CALL (ipc, IPCOP_semctl, semid, semnum, cmd | __IPC_64,
+                             SEMCTL_ARG_ADDRESS (arg));
 #endif
+
+#if __WORDSIZE == 32 && __TIMESIZE == 64
+  if (ret == 0 && cmd == IPC_STAT)
+    {
+      arg.buf->sem_nsems = arg.buf32->sem_nsems;
+      arg.buf->sem_otime = arg.buf32->sem_otime |
+                               ((time_t) arg.buf32->sem_otime_high << 32);
+      arg.buf->sem_ctime = arg.buf32->sem_ctime |
+                               ((time_t) arg.buf32->sem_ctime_high << 32);
+    }
+#endif
+  return ret;
 }
 
 int

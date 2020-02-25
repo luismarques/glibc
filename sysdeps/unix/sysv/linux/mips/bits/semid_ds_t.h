@@ -20,6 +20,19 @@
 # error "Never include <bits/semid_ds_t.h> directly; use <sys/sem.h> instead."
 #endif
 
+#if __WORDSIZE == 32
+/* This is the "new" y2038 types defined after the 5.1 kernel. It allows
+ * the kernel to use {o,c}time{_high} values to support a 64-bit time_t.  */
+struct __semid_ds32 {
+  struct ipc_perm sem_perm;              /* operation permission struct */
+  __syscall_ulong_t   sem_otime;          /* last semop time */
+  __syscall_ulong_t   sem_ctime;          /* last change time */
+  __syscall_ulong_t   sem_nsems;         /* number of semaphores in set */
+  __syscall_ulong_t   sem_otime_high;
+  __syscall_ulong_t   sem_ctime_high;
+};
+#endif
+
 /* Data structure describing a set of semaphores.  */
 struct semid_ds
 {
